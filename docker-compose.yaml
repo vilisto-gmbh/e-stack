@@ -1,0 +1,28 @@
+services:
+  db:
+    env_file:
+      - .env
+    build:
+      context: ./database
+      args:
+        POSTGRES_USER: ${POSTGRES_USER}
+        POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+        POSTGRES_PORT: ${POSTGRES_PORT}
+        POSTGRES_DB: ${POSTGRES_DB}
+    networks:
+      - pantheon
+    ports:
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
+    expose:
+      - ${POSTGRES_PORT}
+    healthcheck:
+      test: ["CMD", "psql", "-U", "${POSTGRES_USER}", "-d", "${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 30s
+      retries: 3
+      start_period: 5s
+    container_name: db
+
+networks:
+  pantheon:
+    name: pantheon
