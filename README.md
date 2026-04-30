@@ -8,11 +8,16 @@ for Determining an Efficiency of an Energy-Saving Measure in Buildings".
 # Services
 
 ## database
+Uses a [timescale](https://timescale.readthedocs.io/en/latest/) SQL database.
 
 ## db-interface
+Uses [postgREST](https://docs.postgrest.org/en/v14/) as an interface to the database.
 
 ## db-migrations
+Uses [sqitch](https://sqitch.org/docs/) for database management and version control. 
 
 ## frontend
+Uses a [grafana](https://grafana.com/docs/) frontend.
 
 ## orchestrator
+Uses [dagster](https://docs.dagster.io/) for job orchestration.

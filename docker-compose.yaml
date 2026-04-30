@@ -23,8 +23,6 @@ services:
     extends:
       file: base.yaml
       service: base_service
-    environment:
-      - POSTGRES_HOST=db
     build:
       context: ./db-migrations
     depends_on:
@@ -32,6 +30,28 @@ services:
         condition: service_healthy
     container_name: db-migrations
 
+  db-interface:
+    extends:
+      file: base.yaml
+      service: base_service
+    build:
+      context: ./db-interface
+    container_name: db-interface
+    depends_on:
+      db-migrations:
+        condition:
+          service_completed_successfully
+    ports:
+      - ${PGRST_SERVER_PORT}:${PGRST_SERVER_PORT}
+      - ${PGRST_ADMIN_SERVER_PORT}:${PGRST_ADMIN_SERVER_PORT}
+    healthcheck:
+      test:
+        ["CMD", "curl", "-I", "http://localhost:${PGRST_ADMIN_SERVER_PORT}/live"]
+      interval: 5s
+      timeout: 30s
+      retries: 3
+      start_period: 5s
+    
 networks:
   pantheon:
     name: pantheon

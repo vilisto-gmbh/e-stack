@@ -16,7 +16,7 @@ FILE="$(date +'%Y%m%d%H%M%S')_${1// /_}.sql"
 FILE_SQITCH_PLAN="$(date +'%Y%m%d%H%M%S')_${1// /_}" 
 TIMESTAMP=`date +%Y-%m-%dT%H:%M:%SZ`
 BENUTZER="$USER"
-HOST="vilisto.de"
+HOST="james_prescott_joule"
 
 echo "$FILE_SQITCH_PLAN"" ""$TIMESTAMP"" ""$BENUTZER"""  "<""$USER""@""$HOST"">"" ""#"" ""$2" >> ./sqitch.plan
 
