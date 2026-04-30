@@ -1,0 +1,3 @@
+%project=e-stack
+
+20260430094351_schmema-and-user-setup 2026-04-30T09:43:51Z tillmeinel <tillmeinel@vilisto.de> # create first db schema and first user without postgres privileges
