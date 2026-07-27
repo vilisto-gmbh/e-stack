@@ -9,8 +9,6 @@ services:
       - ./database/data:/var/lib/postgresql
     ports:
       - ${POSTGRES_PORT}:${POSTGRES_PORT}
-    expose:
-      - ${POSTGRES_PORT}
     healthcheck:
       test: ["CMD", "psql", "-U", "${POSTGRES_USER}", "-d", "${POSTGRES_DB}"]
       interval: 5s
@@ -56,7 +54,21 @@ services:
       retries: 3
       start_period: 5s
 
+  frontend:
+    extends:
+      file: base.yaml
+      service: base_service
+    build:
+      context: ./frontend
+    container_name: fe
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - ${GRAFANA_PORT}:3000
+    volumes:
+      - ./frontend/data:/var/lib/grafana
+
 networks:
   pantheon:
     name: pantheon
-
