@@ -1,3 +1,5 @@
+
+# vim: set ft=dockerfile :
 # reference https://docs.dagster.io/deployment/oss/deployment-options/docker and https://docs.astral.sh/uv/guides/integration/docker/#available-images
 FROM python:3.14-slim-trixie
 
@@ -10,11 +12,11 @@ RUN sh /uv-installer.sh && rm /uv-installer.sh
 
 # Ensure the installed binary is on the `PATH`
 ENV PATH="/root/.local/bin/:$PATH"
-COPY . /app
-WORKDIR /app
-RUN uv sync --locked --group dagster-services
+COPY . /src/orchestrator opt/dagster/app
+WORKDIR opt/dagster/app
+RUN uv sync --locked --group dagster-rpc
 
-ENV DAGSTER_HOME=/opt/dagster/dagster_home/
-RUN mkdir -p $DAGSTER_HOME
-COPY ./config/dagster.yaml ./config/workspace.yaml $DAGSTER_HOME
-WORKDIR $DAGSTER_HOME
+HEALTHCHECK --timeout=1s --start-period=3s --interval=3s --retries=20 CMD ["uv", "run", "dagster", "api", "grpc-health-check", "-p", "4001"]
+
+# CMD allows this to be overridden from run launchers or executors to execute runs and steps
+CMD ["uv", "run", "dagster", "code-server", "start", "-h", "0.0.0.0", "-p", "4001", "-f", "definitions.py"]

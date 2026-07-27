@@ -1,3 +1,4 @@
+# vim: set ft=dockerfile :
 # reference https://docs.dagster.io/deployment/oss/deployment-options/docker and https://docs.astral.sh/uv/guides/integration/docker/#available-images
 FROM python:3.14-slim-trixie
 
@@ -12,7 +13,7 @@ RUN sh /uv-installer.sh && rm /uv-installer.sh
 ENV PATH="/root/.local/bin/:$PATH"
 COPY . /app
 WORKDIR /app
-RUN uv sync --locked --group dagster-services
+RUN uv sync --locked --group dagster-rpc --group dagster-services
 
 ENV DAGSTER_HOME=/opt/dagster/dagster_home/
 RUN mkdir -p $DAGSTER_HOME

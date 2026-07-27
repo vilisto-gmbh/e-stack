@@ -7,3 +7,4 @@
 create schema if not exists :schema_name;
 create user :user_name with password :'user_password';
 grant all privileges on schema :schema_name to :user_name;
+grant all privileges on schema public to :user_name;
