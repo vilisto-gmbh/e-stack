@@ -9,6 +9,8 @@ services:
       - ./database/data:/var/lib/postgresql
     ports:
       - ${POSTGRES_PORT}:${POSTGRES_PORT}
+    networks:
+      - pantheon
     healthcheck:
       test: ["CMD", "psql", "-U", "${POSTGRES_USER}", "-d", "${POSTGRES_DB}"]
       interval: 5s
@@ -23,6 +25,8 @@ services:
       service: base_service
     build:
       context: ./db-migrations
+    networks:
+      - pantheon
     depends_on:
       db:
         condition: service_healthy
@@ -41,6 +45,8 @@ services:
     ports:
       - ${PGRST_SERVER_PORT}:${PGRST_SERVER_PORT}
       - ${PGRST_ADMIN_SERVER_PORT}:${PGRST_ADMIN_SERVER_PORT}
+    networks:
+      - pantheon
     healthcheck:
       test:
         [
@@ -66,8 +72,46 @@ services:
         condition: service_healthy
     ports:
       - ${GRAFANA_PORT}:3000
+    networks:
+      - pantheon
     volumes:
       - ./frontend/data:/var/lib/grafana
+
+  dagster_webserver:
+    build:
+      context: ./orchestrator
+    env_file:
+      - path: .env
+        required: true
+    environment:
+      DAGSTER_POSTGRES_USER: ${DB_USER}
+      DAGSTER_POSTGRES_PASSWORD: ${DB_USER_PASSWORD}
+      DAGSTER_POSTGRES_DB: ${POSTGRES_DB}
+      DAGSTER_POSTGRES_HOST: ${POSTGRES_HOST}
+    container_name: dg_ws
+    depends_on:
+      db:
+        condition: service_healthy
+    entrypoint:
+      - uv
+      - run
+      - --project
+      - /app
+      - dagster-webserver
+      - -h
+      - "0.0.0.0"
+      - -p
+      - ${DAGSTER_WS_PORT}
+      - -w
+      - workspace.yaml
+    ports:
+      - ${DAGSTER_WS_PORT}:${DAGSTER_WS_PORT}
+    networks:
+      - pantheon
+
+  # dagster_daemon:
+  #   build:
+  #     context: ./orchestrator
 
 networks:
   pantheon:

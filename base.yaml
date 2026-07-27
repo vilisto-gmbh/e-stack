@@ -19,6 +19,3 @@ services:
         PGRST_DB_SCHEMA: ${SCHEMA_NAME}
         PGRST_DB_EXTRA_SEARCH_PATH: ${SCHEMA_NAME}
         PGRST_DB_ANON_ROLE: ${DB_USER}
-    networks:
-      - pantheon
-
