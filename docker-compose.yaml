@@ -6,7 +6,7 @@ services:
     build:
       context: ./database
     volumes:
-      - ./database/data:/var/lib/postgresql/data
+      - ./database/data:/var/lib/postgresql
     ports:
       - ${POSTGRES_PORT}:${POSTGRES_PORT}
     expose:
@@ -26,7 +26,7 @@ services:
     build:
       context: ./db-migrations
     depends_on:
-      db: 
+      db:
         condition: service_healthy
     container_name: db-migrations
 
@@ -39,19 +39,24 @@ services:
     container_name: db-interface
     depends_on:
       db-migrations:
-        condition:
-          service_completed_successfully
+        condition: service_completed_successfully
     ports:
       - ${PGRST_SERVER_PORT}:${PGRST_SERVER_PORT}
       - ${PGRST_ADMIN_SERVER_PORT}:${PGRST_ADMIN_SERVER_PORT}
     healthcheck:
       test:
-        ["CMD", "curl", "-I", "http://localhost:${PGRST_ADMIN_SERVER_PORT}/live"]
+        [
+          "CMD",
+          "curl",
+          "-I",
+          "http://localhost:${PGRST_ADMIN_SERVER_PORT}/live",
+        ]
       interval: 5s
       timeout: 30s
       retries: 3
       start_period: 5s
-    
+
 networks:
   pantheon:
     name: pantheon
+
