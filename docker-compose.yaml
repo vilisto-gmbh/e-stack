@@ -1,0 +1,74 @@
+services:
+  db:
+    extends:
+      file: base.yaml
+      service: base_service
+    build:
+      context: ./database
+    volumes:
+      - ./database/data:/var/lib/postgresql
+    ports:
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
+    healthcheck:
+      test: ["CMD", "psql", "-U", "${POSTGRES_USER}", "-d", "${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 30s
+      retries: 3
+      start_period: 5s
+    container_name: db
+
+  db-migrations:
+    extends:
+      file: base.yaml
+      service: base_service
+    build:
+      context: ./db-migrations
+    depends_on:
+      db:
+        condition: service_healthy
+    container_name: db-migrations
+
+  db-interface:
+    extends:
+      file: base.yaml
+      service: base_service
+    build:
+      context: ./db-interface
+    container_name: db-interface
+    depends_on:
+      db-migrations:
+        condition: service_completed_successfully
+    ports:
+      - ${PGRST_SERVER_PORT}:${PGRST_SERVER_PORT}
+      - ${PGRST_ADMIN_SERVER_PORT}:${PGRST_ADMIN_SERVER_PORT}
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "curl",
+          "-I",
+          "http://localhost:${PGRST_ADMIN_SERVER_PORT}/live",
+        ]
+      interval: 5s
+      timeout: 30s
+      retries: 3
+      start_period: 5s
+
+  frontend:
+    extends:
+      file: base.yaml
+      service: base_service
+    build:
+      context: ./frontend
+    container_name: fe
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - ${GRAFANA_PORT}:3000
+    volumes:
+      - ./frontend/data:/var/lib/grafana
+
+networks:
+  pantheon:
+    name: pantheon
