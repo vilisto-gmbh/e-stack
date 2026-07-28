@@ -94,7 +94,7 @@ services:
       db-migrations:
         condition: service_completed_successfully
     ports:
-      - 4001:4001
+      - ${DAGSTER_UC_PORT}:${DAGSTER_UC_PORT}
     networks:
       - pantheon
 

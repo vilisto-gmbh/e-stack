@@ -1,5 +1,6 @@
 load_from:
   - grpc_server:
       host: dagster_user_code
-      port: 4001
+      port:
+        env: DAGSTER_UC_PORT
       location_name: "user_code"
