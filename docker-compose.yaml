@@ -1,10 +1,10 @@
 services:
   db:
-    extends:
-      file: base.yaml
-      service: base_service
     build:
       context: ./database
+    env_file:
+      - path: .env
+        required: true
     volumes:
       - ./database/data:/var/lib/postgresql
     ports:
@@ -14,11 +14,13 @@ services:
     container_name: db
 
   db-migrations:
-    extends:
-      file: base.yaml
-      service: base_service
     build:
       context: ./db-migrations
+      args:
+        DB_USER: ${DB_USER}
+    env_file:
+      - path: .env
+        required: true
     networks:
       - pantheon
     depends_on:
@@ -27,9 +29,6 @@ services:
     container_name: db-migrations
 
   db-interface:
-    extends:
-      file: base.yaml
-      service: base_service
     build:
       context: ./db-interface
     env_file:
@@ -49,25 +48,13 @@ services:
       - ${PGRST_ADMIN_SERVER_PORT}:${PGRST_ADMIN_SERVER_PORT}
     networks:
       - pantheon
-    healthcheck:
-      test:
-        [
-          "CMD",
-          "curl",
-          "-I",
-          "http://localhost:${PGRST_ADMIN_SERVER_PORT}/live",
-        ]
-      interval: 5s
-      timeout: 30s
-      retries: 3
-      start_period: 5s
 
   frontend:
-    extends:
-      file: base.yaml
-      service: base_service
     build:
       context: ./frontend
+    env_file:
+      - path: .env
+        required: true
     container_name: fe
     depends_on:
       db:
