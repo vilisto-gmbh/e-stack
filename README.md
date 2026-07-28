@@ -17,16 +17,17 @@ cp .env-example .env
 
 | Name | Description | Example |
 | --- | --- | --- |
-| POSTGRES_PORT | Port the TimescaleDB database listens on | 5432 |
-| POSTGRES_USER | Superuser name for the database | postgres |
-| POSTGRES_PASSWORD | Password for the database superuser | timescale |
-| POSTGRES_DB | Name of the default database | e-stack |
-| DB_USER | Service database user used for migrations | james_prescott_joule |
-| DB_USER_PASSWORD | Password for the service database user | super_secret_password |
-| POSTGRES_HOST | Hostname of the database service | db |
-| SCHEMA_NAME | Name of the database schema | energy |
+| POSTGRES_PORT | Port that database listens on | 5432 |
+| POSTGRES_USER | Database superuser name | postgres |
+| POSTGRES_PASSWORD | Database superuser password | timescale |
+| POSTGRES_DB | Database name| e-stack |
+| POSTGRES_HOST | Database host | db |
+| DB_USER | Database regular user name | james_prescott_joule |
+| DB_USER_PASSWORD | Database regular user password | super_secret_password |
+| SCHEMA_NAME | Default user application schema name | energy |
+| POSTGREST_HOST | Hostname of the postgREST service | db |
 | PGRST_ADMIN_SERVER_PORT | Admin server port for PostgREST | 3001 |
-| PGRST_SERVER_PORT | Main server port for PostgREST | 3000 |
+| PGRST_SERVER_PORT | Main server port for postgREST | 3000 |
 | GRAFANA_PORT | Port the Grafana frontend is served on | 9000 |
 | GF_SECURITY_ADMIN_PASSWORD | Password for the Grafana admin user | highly_secret_password |
 | DAGSTER_WS_PORT | Port for the Dagster webserver | 4000 |
