@@ -53,7 +53,7 @@ Uses a [timescale](https://timescale.readthedocs.io/en/latest/) SQL database. Wh
 ```bash
 rm -r database/data/*
 ```
-This database serves as storage sqitch and dagster meta data as well.
+This database serves as storage for sqitch and dagster meta data as well. Each service stores its data in its own namespace however.
 
 ## db-interface
 Uses [postgREST](https://docs.postgrest.org/en/v14/) as an interface to the database.
