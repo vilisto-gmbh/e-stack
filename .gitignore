@@ -4,6 +4,7 @@
 # LOCAL DATA
 database/data/*
 frontend/data/*
+orchestrator/.dg
 
 # VIRTUAL ENVIRONMENT
 .venv
