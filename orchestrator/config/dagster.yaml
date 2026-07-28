@@ -11,3 +11,5 @@ storage:
         env: DAGSTER_POSTGRES_DB
       port:
         env: POSTGRES_PORT
+      params:
+        options: "-c search_path=dagster"
