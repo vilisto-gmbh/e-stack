@@ -7,7 +7,7 @@ frontend/data/*
 **/.dg
 
 # VIRTUAL ENVIRONMENT
-.venv
+**/.venv
 
 # AGENTS
 .claude
