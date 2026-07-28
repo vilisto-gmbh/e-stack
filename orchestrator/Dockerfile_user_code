@@ -12,11 +12,11 @@ RUN sh /uv-installer.sh && rm /uv-installer.sh
 
 # Ensure the installed binary is on the `PATH`
 ENV PATH="/root/.local/bin/:$PATH"
-COPY . /src/orchestrator opt/dagster/app
-WORKDIR opt/dagster/app
+COPY . /src/orchestrator opt/dagster/orchestrator
+WORKDIR opt/dagster/orchestrator
 RUN uv sync --locked --group dagster-rpc
 
 HEALTHCHECK --timeout=1s --start-period=3s --interval=3s --retries=20 CMD ["uv", "run", "dagster", "api", "grpc-health-check", "-p", "4001"]
 
 # CMD allows this to be overridden from run launchers or executors to execute runs and steps
-CMD ["uv", "run", "dagster", "code-server", "start", "-h", "0.0.0.0", "-p", "4001", "-f", "definitions.py"]
+CMD ["uv", "run", "dagster", "code-server", "start", "-h", "0.0.0.0", "-p", "4001", "-f", "definitions.py", "--location-name", "orchestrator"]

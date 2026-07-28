@@ -33,3 +33,4 @@ root_module = "orchestrator"
 registry_modules = [
     "orchestrator.components.*",
 ]
+code_location_name = "orchestrator"
