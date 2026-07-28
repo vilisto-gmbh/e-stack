@@ -5,6 +5,7 @@ description = "python code for dagster orchestrated project jobs"
 requires-python = ">=3.14"
 dependencies = [
     "dagster>=1.13.15",
+    "polars>=1.43.1",
 ]
 
 [dependency-groups]
@@ -24,6 +25,10 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 force-include = { "pyproject.toml" = "pyproject.toml" }
+
+[tool.pyright]
+venvPath = "."
+venv = ".venv"
 
 [tool.dg]
 directory_type = "project"
