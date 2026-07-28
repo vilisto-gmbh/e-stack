@@ -1,7 +1,7 @@
 [project]
 name = "orchestrator"
 version = "0.1.0"
-description = "python code for project jobs orchestrated via dagster"
+description = "python code for dagster orchestrated project jobs"
 requires-python = ">=3.14"
 dependencies = [
     "dagster>=1.13.15",
