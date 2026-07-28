@@ -11,12 +11,6 @@ services:
       - ${POSTGRES_PORT}:${POSTGRES_PORT}
     networks:
       - pantheon
-    healthcheck:
-      test: ["CMD", "psql", "-U", "${POSTGRES_USER}", "-d", "${POSTGRES_DB}"]
-      interval: 5s
-      timeout: 30s
-      retries: 3
-      start_period: 5s
     container_name: db
 
   db-migrations:

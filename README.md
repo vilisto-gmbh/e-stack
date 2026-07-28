@@ -1,9 +1,38 @@
-# Intro
+# E-stack
 
-IMPORTANT: Parts of this software are being filed for patent, registration number 24176723.5: "Method, System and Computer Program
-for Determining an Efficiency of an Energy-Saving Measure in Buildings".
+Out-of-the-box-framework for data pipelines including database, frontend and orchestration services. This architecture was originally built for energy time series data but can be used for any type of data.
+All services are containerized and meant to be run locally via docker compose. In order to keep things simple and suited for this purpose, the number of database users was kept as low as possible and passwords are injected using environment variables.
+
+To use the stack in a production environment, make sure to securely inject sensitive data such as passwords, for instance by using docker secrets. It is also advised to create an individual database user with further reduced privileges per service.
 
 # Setup
+
+## Environment
+
+Define environment variables in a file called `.env` in the root directory:
+
+```bash
+cp .env-example .env
+```
+
+| Name | Description | Example |
+| --- | --- | --- |
+| POSTGRES_PORT | Port the TimescaleDB database listens on | 5432 |
+| POSTGRES_USER | Superuser name for the database | postgres |
+| POSTGRES_PASSWORD | Password for the database superuser | timescale |
+| POSTGRES_DB | Name of the default database | e-stack |
+| DB_USER | Service database user used for migrations | james_prescott_joule |
+| DB_USER_PASSWORD | Password for the service database user | super_secret_password |
+| POSTGRES_HOST | Hostname of the database service | db |
+| SCHEMA_NAME | Name of the database schema | energy |
+| PGRST_ADMIN_SERVER_PORT | Admin server port for PostgREST | 3001 |
+| PGRST_SERVER_PORT | Main server port for PostgREST | 3000 |
+| GRAFANA_PORT | Port the Grafana frontend is served on | 9000 |
+| GF_SECURITY_ADMIN_PASSWORD | Password for the Grafana admin user | highly_secret_password |
+| DAGSTER_WS_PORT | Port for the Dagster webserver | 4000 |
+| DAGSTER_UC_PORT | Port for the Dagster user code server | 4001 |
+
+## Running the stack
 
 Build the docker stack for the first time via
 ```bash
@@ -23,6 +52,7 @@ Uses a [timescale](https://timescale.readthedocs.io/en/latest/) SQL database. Wh
 ```bash
 rm -r database/data/*
 ```
+This database serves as storage sqitch and dagster meta data as well.
 
 ## db-interface
 Uses [postgREST](https://docs.postgrest.org/en/v14/) as an interface to the database.
