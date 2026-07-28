@@ -4,10 +4,13 @@
 # LOCAL DATA
 database/data/*
 frontend/data/*
-orchestrator/.dg
+**/.dg
 
 # VIRTUAL ENVIRONMENT
 .venv
 
 # AGENTS
 .claude
+
+# CACHES
+**/__pycache__
