@@ -3,13 +3,11 @@ storage:
     postgres_db:
       hostname:
         env: DAGSTER_POSTGRES_HOST
-      username:
-        env: DAGSTER_POSTGRES_USER
+      username: orchestrator_db_user
       password:
         env: DAGSTER_POSTGRES_PASSWORD
-      db_name:
-        env: DAGSTER_POSTGRES_DB
+      db_name: app_db
       port:
         env: POSTGRES_PORT
       params:
-        options: "-c search_path=dagster"
+        options: "-c search_path=orchestrator"

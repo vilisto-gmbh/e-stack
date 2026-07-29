@@ -69,109 +69,94 @@ services:
     secrets:
       - interface_db_user_password
 
-  # frontend:
-  #   build:
-  #     context: ./frontend
-  #   env_file:
-  #     - path: .env
-  #       required: true
-  #   container_name: fe
-  #   depends_on:
-  #     db:
-  #       condition: service_healthy
-  #   ports:
-  #     - ${GRAFANA_PORT}:3000
-  #   networks:
-  #     - pantheon
-  #   volumes:
-  #     - ./frontend/data:/var/lib/grafana
-  #
-  # dagster_user_code:
-  #   build:
-  #     context: ./orchestrator
-  #     dockerfile: ./Dockerfile_user_code
-  #   env_file:
-  #     - path: .env
-  #       required: true
-  #   environment:
-  #     DAGSTER_POSTGRES_USER: ${DB_USER}
-  #     DAGSTER_POSTGRES_PASSWORD: ${DB_USER_PASSWORD}
-  #     DAGSTER_POSTGRES_DB: ${POSTGRES_DB}
-  #     DAGSTER_POSTGRES_HOST: ${POSTGRES_HOST}
-  #   container_name: dg_uc
-  #   depends_on:
-  #     db-migrations:
-  #       condition: service_completed_successfully
-  #   ports:
-  #     - ${DAGSTER_UC_PORT}:${DAGSTER_UC_PORT}
-  #   networks:
-  #     - pantheon
-  #
-  # dagster_webserver:
-  #   build:
-  #     context: ./orchestrator
-  #     dockerfile: ./Dockerfile_dagster
-  #   env_file:
-  #     - path: .env
-  #       required: true
-  #   environment:
-  #     DAGSTER_POSTGRES_USER: ${DB_USER}
-  #     DAGSTER_POSTGRES_PASSWORD: ${DB_USER_PASSWORD}
-  #     DAGSTER_POSTGRES_DB: ${POSTGRES_DB}
-  #     DAGSTER_POSTGRES_HOST: ${POSTGRES_HOST}
-  #   container_name: dg_ws
-  #   depends_on:
-  #     dagster_user_code:
-  #       condition: service_healthy
-  #   entrypoint:
-  #     - uv
-  #     - run
-  #     - --project
-  #     - /orchestrator
-  #     - dagster-webserver
-  #     - -h
-  #     - "0.0.0.0"
-  #     - -p
-  #     - ${DAGSTER_WS_PORT}
-  #     - -w
-  #     - workspace.yaml
-  #   ports:
-  #     - ${DAGSTER_WS_PORT}:${DAGSTER_WS_PORT}
-  #   volumes:
-  #     - /var/run/docker.sock:/var/run/docker.sock
-  #     - /tmp/io_manager_storage:/tmp/io_manager_storage
-  #   networks:
-  #     - pantheon
-  #
-  # dagster_daemon:
-  #   build:
-  #     context: ./orchestrator
-  #     dockerfile: ./Dockerfile_dagster
-  #   env_file:
-  #     - path: .env
-  #       required: true
-  #   environment:
-  #     DAGSTER_POSTGRES_USER: ${DB_USER}
-  #     DAGSTER_POSTGRES_PASSWORD: ${DB_USER_PASSWORD}
-  #     DAGSTER_POSTGRES_DB: ${POSTGRES_DB}
-  #     DAGSTER_POSTGRES_HOST: ${POSTGRES_HOST}
-  #   container_name: dg_d
-  #   entrypoint:
-  #     - uv
-  #     - run
-  #     - --project
-  #     - /orchestrator
-  #     - dagster-daemon
-  #     - run
-  #   depends_on:
-  #     dagster_user_code:
-  #       condition: service_healthy
-  #   restart: on-failure
-  #   volumes:
-  #     - /var/run/docker.sock:/var/run/docker.sock
-  #     - /tmp/io_manager_storage:/tmp/io_manager_storage
-  #   networks:
-  #     - pantheon
+  frontend:
+    build:
+      context: ./frontend
+    env_file:
+      - path: .env
+        required: true
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD__FILE: /run/secrets/frontend_db_user_password
+    container_name: fe
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - ${GRAFANA_PORT}:3000
+    networks:
+      - pantheon
+    volumes:
+      - ./frontend/data:/var/lib/grafana
+    secrets:
+      - frontend_db_user_password
+
+  dagster_user_code:
+    build:
+      context: ./orchestrator
+      dockerfile: ./Dockerfile_user_code
+    env_file:
+      - path: .env
+        required: true
+    environment:
+      DAGSTER_POSTGRES_PASSWORD_FILE: /run/secrets/orchestrator_db_user_password
+      DAGSTER_POSTGRES_HOST: ${POSTGRES_HOST}
+    container_name: dg_uc
+    depends_on:
+      db-migrations:
+        condition: service_completed_successfully
+    ports:
+      - ${DAGSTER_UC_PORT}:${DAGSTER_UC_PORT}
+    networks:
+      - pantheon
+    secrets:
+      - orchestrator_db_user_password
+
+  dagster_webserver:
+    build:
+      context: ./orchestrator
+      dockerfile: ./Dockerfile_dagster_webserver
+    env_file:
+      - path: .env
+        required: true
+    environment:
+      DAGSTER_POSTGRES_PASSWORD_FILE: /run/secrets/orchestrator_db_user_password
+      DAGSTER_POSTGRES_HOST: ${POSTGRES_HOST}
+    container_name: dg_ws
+    depends_on:
+      dagster_user_code:
+        condition: service_healthy
+    ports:
+      - ${DAGSTER_WS_PORT}:${DAGSTER_WS_PORT}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /tmp/io_manager_storage:/tmp/io_manager_storage
+    networks:
+      - pantheon
+    secrets:
+      - orchestrator_db_user_password
+
+  dagster_daemon:
+    build:
+      context: ./orchestrator
+      dockerfile: ./Dockerfile_dagster_daemon
+    env_file:
+      - path: .env
+        required: true
+    environment:
+      DAGSTER_POSTGRES_PASSWORD_FILE: /run/secrets/orchestrator_db_user_password
+      DAGSTER_POSTGRES_HOST: ${POSTGRES_HOST}
+    container_name: dg_d
+    depends_on:
+      dagster_user_code:
+        condition: service_healthy
+    restart: on-failure
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /tmp/io_manager_storage:/tmp/io_manager_storage
+    networks:
+      - pantheon
+    secrets:
+      - orchestrator_db_user_password
 
 networks:
   pantheon:
