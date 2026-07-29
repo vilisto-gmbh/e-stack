@@ -1,0 +1,21 @@
+# vim: set ft=dockerfile :
+# reference https://docs.dagster.io/deployment/oss/deployment-options/docker and https://docs.astral.sh/uv/guides/integration/docker/#available-images
+FROM python:3.14-slim-trixie
+
+RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates
+ADD https://astral.sh/uv/install.sh /uv-installer.sh
+RUN sh /uv-installer.sh && rm /uv-installer.sh
+
+COPY entrypoint.sh /usr/local/bin/custom-entrypoint.sh
+RUN chmod +x /usr/local/bin/custom-entrypoint.sh
+
+# Ensure the installed binary is on the `PATH`
+ENV PATH="/root/.local/bin/:$PATH"
+COPY . /src/orchestrator opt/dagster/orchestrator
+WORKDIR opt/dagster/orchestrator
+RUN uv sync --locked --group dagster-rpc
+
+HEALTHCHECK --timeout=1s --start-period=3s --interval=3s --retries=20 CMD ["sh", "-c", "uv run dagster api grpc-health-check -p $DAGSTER_UC_PORT"]
+
+ENTRYPOINT ["custom-entrypoint.sh"]
+CMD ["sh", "-c", "uv run dagster code-server start -h 0.0.0.0 -p $DAGSTER_UC_PORT -f definitions.py --location-name orchestrator"]

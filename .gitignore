@@ -1,3 +1,20 @@
+# ENVIRONMENT
 .env
+
+# LOCAL DATA
 database/data/*
 frontend/data/*
+**/.dg
+
+# VIRTUAL ENVIRONMENT
+**/.venv
+
+# AGENTS
+.claude
+
+# CACHES
+**/__pycache__
+
+# SECRETS
+secrets/*
+!secrets/examples/

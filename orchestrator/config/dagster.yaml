@@ -1,0 +1,13 @@
+storage:
+  postgres:
+    postgres_db:
+      hostname:
+        env: DAGSTER_POSTGRES_HOST
+      username: orchestrator_db_user
+      password:
+        env: DAGSTER_POSTGRES_PASSWORD
+      db_name: app_db
+      port:
+        env: POSTGRES_PORT
+      params:
+        options: "-c search_path=orchestrator"
