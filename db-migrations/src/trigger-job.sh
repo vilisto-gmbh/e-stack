@@ -1,9 +1,14 @@
 #!/bin/bash
-errormsg=$(sqitch deploy --target "db:pg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}")
+if [ -f $MIGRATIONS_DB_USER_PASSWORD_FILE ];
+then export MIGRATIONS_DB_USER_PASSWORD="$(cat $MIGRATIONS_DB_USER_PASSWORD_FILE)";
+else echo "No migrations_db_user_password secret provided.";
+fi
+
+errormsg=$(sqitch deploy --target "db:pg://migrations_db_user:${MIGRATIONS_DB_USER_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/app_db")
 rescode=$?
 errormsg_stripped=$(echo $errormsg | cut -f -3 -d" ")
 
-errormsg=$(sqitch verify --target "db:pg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}" 2>&1)
+errormsg=$(sqitch verify --target "db:pg://migrations_db_user:${MIGRATIONS_DB_USER_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/app_db" 2>&1)
 
 if [ "$errormsg_stripped" = "Nothing to deploy" ]
 then

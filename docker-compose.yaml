@@ -5,6 +5,14 @@ services:
     env_file:
       - path: .env
         required: true
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: app_db
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_db_user_password
+      MIGRATIONS_DB_USER_PASSWORD_FILE: /run/secrets/migrations_db_user_password
+      INTERFACE_DB_USER_PASSWORD_FILE: /run/secrets/interface_db_user_password
+      FRONTEND_DB_USER_PASSWORD_FILE: /run/secrets/frontend_db_user_password
+      ORCHESTRATOR_DB_USER_PASSWORD_FILE: /run/secrets/orchestrator_db_user_password
     volumes:
       - ./database/data:/var/lib/postgresql
     ports:
@@ -12,146 +20,156 @@ services:
     networks:
       - pantheon
     container_name: db
+    secrets:
+      - postgres_db_user_password
+      - migrations_db_user_password
+      - interface_db_user_password
+      - frontend_db_user_password
+      - orchestrator_db_user_password
 
   db-migrations:
     build:
       context: ./db-migrations
       args:
-        DB_USER: ${DB_USER}
+        MIGRATIONS_DB_USER: migrations_db_user
     env_file:
       - path: .env
         required: true
+    environment:
+      MIGRATIONS_DB_USER_PASSWORD_FILE: /run/secrets/migrations_db_user_password
     networks:
       - pantheon
     depends_on:
       db:
         condition: service_healthy
     container_name: db-migrations
+    secrets:
+      - migrations_db_user_password
 
-  db-interface:
-    build:
-      context: ./db-interface
-    env_file:
-      - path: .env
-        required: true
-    environment:
-      PGRST_DB_URI: postgresql://${DB_USER}:${DB_USER_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
-      PGRST_DB_SCHEMAS: ${SCHEMA_NAME}
-      PGRST_DB_EXTRA_SEARCH_PATH: ${SCHEMA_NAME}
-      PGRST_DB_ANON_ROLE: ${DB_USER}
-    container_name: db-if
-    depends_on:
-      db-migrations:
-        condition: service_completed_successfully
-    ports:
-      - ${PGRST_SERVER_PORT}:${PGRST_SERVER_PORT}
-      - ${PGRST_ADMIN_SERVER_PORT}:${PGRST_ADMIN_SERVER_PORT}
-    networks:
-      - pantheon
-
-  frontend:
-    build:
-      context: ./frontend
-    env_file:
-      - path: .env
-        required: true
-    container_name: fe
-    depends_on:
-      db:
-        condition: service_healthy
-    ports:
-      - ${GRAFANA_PORT}:3000
-    networks:
-      - pantheon
-    volumes:
-      - ./frontend/data:/var/lib/grafana
-
-  dagster_user_code:
-    build:
-      context: ./orchestrator
-      dockerfile: ./Dockerfile_user_code
-    env_file:
-      - path: .env
-        required: true
-    environment:
-      DAGSTER_POSTGRES_USER: ${DB_USER}
-      DAGSTER_POSTGRES_PASSWORD: ${DB_USER_PASSWORD}
-      DAGSTER_POSTGRES_DB: ${POSTGRES_DB}
-      DAGSTER_POSTGRES_HOST: ${POSTGRES_HOST}
-    container_name: dg_uc
-    depends_on:
-      db-migrations:
-        condition: service_completed_successfully
-    ports:
-      - ${DAGSTER_UC_PORT}:${DAGSTER_UC_PORT}
-    networks:
-      - pantheon
-
-  dagster_webserver:
-    build:
-      context: ./orchestrator
-      dockerfile: ./Dockerfile_dagster
-    env_file:
-      - path: .env
-        required: true
-    environment:
-      DAGSTER_POSTGRES_USER: ${DB_USER}
-      DAGSTER_POSTGRES_PASSWORD: ${DB_USER_PASSWORD}
-      DAGSTER_POSTGRES_DB: ${POSTGRES_DB}
-      DAGSTER_POSTGRES_HOST: ${POSTGRES_HOST}
-    container_name: dg_ws
-    depends_on:
-      dagster_user_code:
-        condition: service_healthy
-    entrypoint:
-      - uv
-      - run
-      - --project
-      - /orchestrator
-      - dagster-webserver
-      - -h
-      - "0.0.0.0"
-      - -p
-      - ${DAGSTER_WS_PORT}
-      - -w
-      - workspace.yaml
-    ports:
-      - ${DAGSTER_WS_PORT}:${DAGSTER_WS_PORT}
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - /tmp/io_manager_storage:/tmp/io_manager_storage
-    networks:
-      - pantheon
-
-  dagster_daemon:
-    build:
-      context: ./orchestrator
-      dockerfile: ./Dockerfile_dagster
-    env_file:
-      - path: .env
-        required: true
-    environment:
-      DAGSTER_POSTGRES_USER: ${DB_USER}
-      DAGSTER_POSTGRES_PASSWORD: ${DB_USER_PASSWORD}
-      DAGSTER_POSTGRES_DB: ${POSTGRES_DB}
-      DAGSTER_POSTGRES_HOST: ${POSTGRES_HOST}
-    container_name: dg_d
-    entrypoint:
-      - uv
-      - run
-      - --project
-      - /orchestrator
-      - dagster-daemon
-      - run
-    depends_on:
-      dagster_user_code:
-        condition: service_healthy
-    restart: on-failure
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - /tmp/io_manager_storage:/tmp/io_manager_storage
-    networks:
-      - pantheon
+  # db-interface:
+  #   build:
+  #     context: ./db-interface
+  #   env_file:
+  #     - path: .env
+  #       required: true
+  #   environment:
+  #     PGRST_DB_URI: postgresql://interface_db_user:${INTERFACE_DB_USER_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/app_db
+  #     PGRST_DB_SCHEMAS: app_schema
+  #     PGRST_DB_EXTRA_SEARCH_PATH: app_schema
+  #     PGRST_DB_ANON_ROLE: interface_db_user
+  #   container_name: db-if
+  #   depends_on:
+  #     db-migrations:
+  #       condition: service_completed_successfully
+  #   ports:
+  #     - ${PGRST_SERVER_PORT}:${PGRST_SERVER_PORT}
+  #     - ${PGRST_ADMIN_SERVER_PORT}:${PGRST_ADMIN_SERVER_PORT}
+  #   networks:
+  #     - pantheon
+  #
+  # frontend:
+  #   build:
+  #     context: ./frontend
+  #   env_file:
+  #     - path: .env
+  #       required: true
+  #   container_name: fe
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+  #   ports:
+  #     - ${GRAFANA_PORT}:3000
+  #   networks:
+  #     - pantheon
+  #   volumes:
+  #     - ./frontend/data:/var/lib/grafana
+  #
+  # dagster_user_code:
+  #   build:
+  #     context: ./orchestrator
+  #     dockerfile: ./Dockerfile_user_code
+  #   env_file:
+  #     - path: .env
+  #       required: true
+  #   environment:
+  #     DAGSTER_POSTGRES_USER: ${DB_USER}
+  #     DAGSTER_POSTGRES_PASSWORD: ${DB_USER_PASSWORD}
+  #     DAGSTER_POSTGRES_DB: ${POSTGRES_DB}
+  #     DAGSTER_POSTGRES_HOST: ${POSTGRES_HOST}
+  #   container_name: dg_uc
+  #   depends_on:
+  #     db-migrations:
+  #       condition: service_completed_successfully
+  #   ports:
+  #     - ${DAGSTER_UC_PORT}:${DAGSTER_UC_PORT}
+  #   networks:
+  #     - pantheon
+  #
+  # dagster_webserver:
+  #   build:
+  #     context: ./orchestrator
+  #     dockerfile: ./Dockerfile_dagster
+  #   env_file:
+  #     - path: .env
+  #       required: true
+  #   environment:
+  #     DAGSTER_POSTGRES_USER: ${DB_USER}
+  #     DAGSTER_POSTGRES_PASSWORD: ${DB_USER_PASSWORD}
+  #     DAGSTER_POSTGRES_DB: ${POSTGRES_DB}
+  #     DAGSTER_POSTGRES_HOST: ${POSTGRES_HOST}
+  #   container_name: dg_ws
+  #   depends_on:
+  #     dagster_user_code:
+  #       condition: service_healthy
+  #   entrypoint:
+  #     - uv
+  #     - run
+  #     - --project
+  #     - /orchestrator
+  #     - dagster-webserver
+  #     - -h
+  #     - "0.0.0.0"
+  #     - -p
+  #     - ${DAGSTER_WS_PORT}
+  #     - -w
+  #     - workspace.yaml
+  #   ports:
+  #     - ${DAGSTER_WS_PORT}:${DAGSTER_WS_PORT}
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #     - /tmp/io_manager_storage:/tmp/io_manager_storage
+  #   networks:
+  #     - pantheon
+  #
+  # dagster_daemon:
+  #   build:
+  #     context: ./orchestrator
+  #     dockerfile: ./Dockerfile_dagster
+  #   env_file:
+  #     - path: .env
+  #       required: true
+  #   environment:
+  #     DAGSTER_POSTGRES_USER: ${DB_USER}
+  #     DAGSTER_POSTGRES_PASSWORD: ${DB_USER_PASSWORD}
+  #     DAGSTER_POSTGRES_DB: ${POSTGRES_DB}
+  #     DAGSTER_POSTGRES_HOST: ${POSTGRES_HOST}
+  #   container_name: dg_d
+  #   entrypoint:
+  #     - uv
+  #     - run
+  #     - --project
+  #     - /orchestrator
+  #     - dagster-daemon
+  #     - run
+  #   depends_on:
+  #     dagster_user_code:
+  #       condition: service_healthy
+  #   restart: on-failure
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #     - /tmp/io_manager_storage:/tmp/io_manager_storage
+  #   networks:
+  #     - pantheon
 
 networks:
   pantheon:
@@ -162,8 +180,8 @@ secrets:
     file: ./secrets/postgres_db_user_password.txt
   migrations_db_user_password:
     file: ./secrets/migrations_db_user_password.txt
-  db_interface_db_user_password:
-    file: ./secrets/db_interface_db_user_password.txt
+  interface_db_user_password:
+    file: ./secrets/interface_db_user_password.txt
   frontend_db_user_password:
     file: ./secrets/frontend_db_user_password.txt
   orchestrator_db_user_password:
