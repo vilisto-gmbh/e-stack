@@ -1,41 +1,35 @@
 # E-stack
 
 Out-of-the-box-framework for data pipelines including database, frontend and orchestration services. This architecture was originally built for energy time series data but can be used for any type of data.
-All services are containerized and meant to be run locally via docker compose. In order to keep things simple and suited for this purpose, the number of database users was kept as low as possible and passwords are injected using environment variables.
-
-To use the stack in a production environment, make sure to securely inject sensitive data such as passwords, for instance by using docker secrets. It is also advised to create an individual database user with further reduced privileges per service. 
+All services are containerized and meant to be run locally via docker compose.
 
 # Setup
 
 ## Environment
 
-Define environment variables in a file called `.env` in the root directory:
-
+Define environment variables with basic configuration in a file called `.env` in the root directory:
 ```bash
 cp .env-example .env
 ```
-
 | Name | Description | Example |
 | --- | --- | --- |
-| POSTGRES_PORT | Port that database listens on | 5432 |
-| POSTGRES_USER | Database superuser name | postgres |
-| POSTGRES_PASSWORD | Database superuser password | timescale |
-| POSTGRES_DB | Database name| e-stack |
-| POSTGRES_HOST | Database host | db |
-| DB_USER | Database regular user name | james_prescott_joule |
-| DB_USER_PASSWORD | Database regular user password | super_secret_password |
-| SCHEMA_NAME | Default user application schema name | energy |
-| POSTGREST_HOST | Hostname of the postgREST service | db |
-| PGRST_ADMIN_SERVER_PORT | Admin server port for PostgREST | 3001 |
-| PGRST_SERVER_PORT | Main server port for postgREST | 3000 |
-| GRAFANA_PORT | Port the Grafana frontend is served on | 9000 |
-| GF_SECURITY_ADMIN_PASSWORD | Password for the Grafana admin user | highly_secret_password |
-| DAGSTER_WS_PORT | Port for the Dagster webserver | 4000 |
-| DAGSTER_UC_PORT | Port for the Dagster user code server | 4001 |
+| POSTGRES_PORT | Port that TimescaleDB listens on | 5432 |
+| POSTGRES_HOST | TimescaleDB host | db |
+| POSTGREST_HOST | PostgREST host | db |
+| PGRST_SERVER_PORT | Port that PostgREST is served on | 3000 |
+| PGRST_ADMIN_SERVER_PORT | Admin  port for PostgREST | 3001 |
+| GRAFANA_PORT | Port that Grafana is served on | 9000 |
+| DAGSTER_WS_PORT | Port that Dagster Webserver is served on | 4000 |
+| DAGSTER_UC_PORT | Port that Dagster User Code is served on | 4001 |
+
+Sensitive data is stored in secrets:
+```bash
+cp secrets/examples/* secrets/
+```
 
 ## Running the stack
 
-Build the docker stack for the first time via
+Build a fresh docker stack using
 ```bash
 docker compose up
 ```
@@ -45,14 +39,19 @@ When rebuilding from scratch use
 docker compose up --force-recreate --renew-anon-volumes --remove-orphans --build
 ```
 
+## Starting fresh
+
+Remove data that is being persisted cross containers which is app data, migrations, orchestrator data and frontend data:
+```bash
+rm -r database/data/*
+rm -r frontend/data/*
+```
+
 # Services
 
 ## database
 Uses a [timescale](https://timescale.readthedocs.io/en/latest/) SQL database. Whenever rebuilding everything from scratch remember to get rid of all data in the data directory:
 
-```bash
-rm -r database/data/*
-```
 This database serves as storage for sqitch and dagster meta data as well. Each service stores its data in its own namespace however.
 
 ## db-interface
