@@ -79,11 +79,11 @@ Uses [postgREST](https://docs.postgrest.org/en/v14/) as an interface to the data
 
 ## frontend
 
-Uses a [grafana](https://grafana.com/docs/) frontend. Access the frontend via [localhost:9000](localhost:9000) assuming you have not modified the GRAFANA_PORT environment variable, otherwise use that port. Use admin as user name and the password set in the frontend_db_user_password secret.
+Uses a [grafana](https://grafana.com/docs/) frontend. Access the frontend via [https://localhost:9000](https://localhost:9000) assuming you have not modified the GRAFANA_PORT environment variable, otherwise use that port. Use admin as user name and the password set in the frontend_db_user_password secret.
 
 ## orchestrator
 
-Uses [dagster](https://docs.dagster.io/) for job orchestration. Access the orchestratro web server via [localhost:4000](localhost:4000) assuming you have not modified the DAGSTER_WS_PORT environment variable, otherwise use that port. For the deployment setup used in this stack, refer to the official dagster documentation.
+Uses [dagster](https://docs.dagster.io/) for job orchestration. Access the orchestratro web server via [https://localhost:4000](https://localhost:4000) assuming you have not modified the DAGSTER_WS_PORT environment variable, otherwise use that port. For the deployment setup used in this stack, refer to the official dagster documentation.
 
 ### Smoke test
 Run the stack, navigate to the webserver, click on Lineage -> processed_csv -> Materialize selected. The asset should successfully materialize.
