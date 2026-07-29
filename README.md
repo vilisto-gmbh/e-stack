@@ -15,7 +15,7 @@ cp .env-example .env
 | --- | --- | --- |
 | POSTGRES_HOST | TimescaleDB host | db |
 | POSTGRES_PORT | Port that TimescaleDB listens on | 5432 |
-| POSTGREST_HOST | PostgREST host | db |
+| POSTGREST_HOST | PostgREST host | db-if |
 | PGRST_SERVER_PORT | Port that PostgREST is served on | 3000 |
 | PGRST_ADMIN_SERVER_PORT | Admin  port for PostgREST | 3001 |
 | GRAFANA_PORT | Port that Grafana is served on | 9000 |
