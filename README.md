@@ -11,7 +11,7 @@ Define environment variables with basic configuration in a file called `.env` in
 ```bash
 cp .env-example .env
 ```
-| Name | Description | Example |
+| Name | Description | Default |
 | --- | --- | --- |
 | POSTGRES_HOST | TimescaleDB host | db |
 | POSTGRES_PORT | Port that TimescaleDB listens on | 5432 |
