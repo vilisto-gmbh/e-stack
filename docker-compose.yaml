@@ -156,3 +156,15 @@ services:
 networks:
   pantheon:
     name: pantheon
+
+secrets:
+  postgres_db_user_password:
+    file: ./secrets/postgres_db_user_password.txt
+  migrations_db_user_password:
+    file: ./secrets/migrations_db_user_password.txt
+  db_interface_db_user_password:
+    file: ./secrets/db_interface_db_user_password.txt
+  frontend_db_user_password:
+    file: ./secrets/frontend_db_user_password.txt
+  orchestrator_db_user_password:
+    file: ./secrets/orchestrator_db_user_password.txt

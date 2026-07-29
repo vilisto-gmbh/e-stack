@@ -14,3 +14,7 @@ frontend/data/*
 
 # CACHES
 **/__pycache__
+
+# SECRETS
+secrets/*
+!secrets/examples/*

@@ -3,7 +3,7 @@
 Out-of-the-box-framework for data pipelines including database, frontend and orchestration services. This architecture was originally built for energy time series data but can be used for any type of data.
 All services are containerized and meant to be run locally via docker compose. In order to keep things simple and suited for this purpose, the number of database users was kept as low as possible and passwords are injected using environment variables.
 
-To use the stack in a production environment, make sure to securely inject sensitive data such as passwords, for instance by using docker secrets. It is also advised to create an individual database user with further reduced privileges per service.
+To use the stack in a production environment, make sure to securely inject sensitive data such as passwords, for instance by using docker secrets. It is also advised to create an individual database user with further reduced privileges per service. 
 
 # Setup
 
