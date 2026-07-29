@@ -46,27 +46,29 @@ services:
     secrets:
       - migrations_db_user_password
 
-  # db-interface:
-  #   build:
-  #     context: ./db-interface
-  #   env_file:
-  #     - path: .env
-  #       required: true
-  #   environment:
-  #     PGRST_DB_URI: postgresql://interface_db_user:${INTERFACE_DB_USER_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/app_db
-  #     PGRST_DB_SCHEMAS: app_schema
-  #     PGRST_DB_EXTRA_SEARCH_PATH: app_schema
-  #     PGRST_DB_ANON_ROLE: interface_db_user
-  #   container_name: db-if
-  #   depends_on:
-  #     db-migrations:
-  #       condition: service_completed_successfully
-  #   ports:
-  #     - ${PGRST_SERVER_PORT}:${PGRST_SERVER_PORT}
-  #     - ${PGRST_ADMIN_SERVER_PORT}:${PGRST_ADMIN_SERVER_PORT}
-  #   networks:
-  #     - pantheon
-  #
+  db-interface:
+    build:
+      context: ./db-interface
+    env_file:
+      - path: .env
+        required: true
+    environment:
+      INTERFACE_DB_USER_PASSWORD_FILE: /run/secrets/interface_db_user_password
+      PGRST_DB_SCHEMAS: app_schema
+      PGRST_DB_EXTRA_SEARCH_PATH: app_schema
+      PGRST_DB_ANON_ROLE: interface_db_user
+    container_name: db-if
+    depends_on:
+      db-migrations:
+        condition: service_completed_successfully
+    ports:
+      - ${PGRST_SERVER_PORT}:${PGRST_SERVER_PORT}
+      - ${PGRST_ADMIN_SERVER_PORT}:${PGRST_ADMIN_SERVER_PORT}
+    networks:
+      - pantheon
+    secrets:
+      - interface_db_user_password
+
   # frontend:
   #   build:
   #     context: ./frontend

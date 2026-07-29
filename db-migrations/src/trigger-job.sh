@@ -1,6 +1,6 @@
 #!/bin/bash
-if [ -f $MIGRATIONS_DB_USER_PASSWORD_FILE ];
-then export MIGRATIONS_DB_USER_PASSWORD="$(cat $MIGRATIONS_DB_USER_PASSWORD_FILE)";
+if [ -f ${MIGRATIONS_DB_USER_PASSWORD_FILE} ];
+then export MIGRATIONS_DB_USER_PASSWORD="$(cat "${MIGRATIONS_DB_USER_PASSWORD_FILE}")";
 else echo "No migrations_db_user_password secret provided.";
 fi
 
