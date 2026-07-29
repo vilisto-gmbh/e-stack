@@ -50,18 +50,43 @@ rm -r frontend/data/*
 # Services
 
 ## database
-Uses a [timescale](https://timescale.readthedocs.io/en/latest/) SQL database. Whenever rebuilding everything from scratch remember to get rid of all data in the data directory:
 
-This database serves as storage for sqitch and dagster meta data as well. Each service stores its data in its own namespace however.
-
-## db-interface
-Uses [postgREST](https://docs.postgrest.org/en/v14/) as an interface to the database.
+Uses a [timescale](https://timescale.readthedocs.io/en/latest/) SQL database. Initilization includes the creationof 
+    - app_db database
+    - app_schema
+    - orchestrator schema
+    - postgres superuser
+    - migrations_db_user who owns all entities created out of db-migrations
+    - interface_db_user who inherits all privileges on app_schema and its tables from migrations_db_user
+    - frontend_db_user who has read privileges on app_schema and its tables 
+    - orchestator_db_user who inherits all privileges on orchestator schema and its tables from migrations_db_user
+This database serves as storage for app, migration and orchestrator data.
 
 ## db-migrations
-Uses [sqitch](https://sqitch.org/docs/) for database management and version control. 
+
+Uses [sqitch](https://sqitch.org/docs/) for database management and version control. In order to add a new migration run  
+```bash
+sh addMigration.sh <migration name> "<brief description of migration>"
+```
+Migrations are run against the database every time the stack is started. In order to run a migration against a running stack, use
+```bash
+docker compose up --no-deps db-migrations
+```
+
+## db-interface
+
+Uses [postgREST](https://docs.postgrest.org/en/v14/) as an interface to the database.
 
 ## frontend
-Uses a [grafana](https://grafana.com/docs/) frontend.
+
+Uses a [grafana](https://grafana.com/docs/) frontend. Access the frontend via [localhost:9000](localhost:9000) assuming you have not modified the GRAFANA_PORT environment variable, otherwise use that port. Use admin as user name and the password set in the frontend_db_user_password secret.
 
 ## orchestrator
-Uses [dagster](https://docs.dagster.io/) for job orchestration.
+
+Uses [dagster](https://docs.dagster.io/) for job orchestration. Access the orchestratro web server via [localhost:4000](localhost:4000) assuming you have not modified the DAGSTER_WS_PORT environment variable, otherwise use that port. For the deployment setup used in this stack, refer to the official dagster documentation.
+
+### Smoke test
+Run the stack, navigate to the webserver, click on Lineage -> processed_csv -> Materialize selected. The asset should successfully materialize.
+
+### Adding user code
+Add your own python code to orchestrator/src/orchestrator.
