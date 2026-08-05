@@ -52,7 +52,7 @@ docker compose down --volumes
 
 # Services
 
-## database
+## Database
 
 Uses a [timescale](https://timescale.readthedocs.io/en/latest/) SQL database. Initilization includes the creationof 
     - app_db database
@@ -66,7 +66,7 @@ Uses a [timescale](https://timescale.readthedocs.io/en/latest/) SQL database. In
     - orchestator_db_user who inherits all privileges on orchestator schema and its tables from migrations_db_user
 This database serves as storage for app, migration and orchestrator data.
 
-## db-migrations
+## DB-migrations
 
 Uses [sqitch](https://sqitch.org/docs/) for database management and version control. In order to add a new migration run  
 ```bash
@@ -77,18 +77,22 @@ Migrations are run against the database every time the stack is started. In orde
 docker compose up --no-deps db-migrations
 ```
 
-## db-seed
+## DB-seed
 This PSQL service populates the database with data specified in `db-seed/data`. After a successfull `seed_db` run, it leaves a sentinel in the db-seed volume which avoids multiple population runs.
 
-## db-interface
+## DB-interface
 
 Uses [postgREST](https://docs.postgrest.org/en/v14/) as an interface to the database.
 
-## frontend
+## Frontend
 
-Uses a [grafana](https://grafana.com/docs/) frontend. Access the frontend via [http://localhost:9000](http://localhost:9000) assuming you have not modified the GRAFANA_PORT environment variable, otherwise use that port. Use admin as user name and the password set in the frontend_db_user_password secret.
+Uses a [grafana](https://grafana.com/docs/) frontend. Access the frontend via [http://localhost:9000](http://localhost:9000) assuming you have not modified the GRAFANA_PORT environment variable, otherwise use that port. Use admin as user name and the password set in the frontend_db_user_password secret. This service comes with an example dahboard in dashboards -> examples -> example_dashboard which can be adjusted. Adjustments are persisted cross containers in the `fe-data` volume.
 
-## orchestrator
+### Persist modified dashboards
+
+Modify any dashboard, save it and then hit the export symbol in the top right corner of the screen. Choose `export as code` -> `copy to clipboard` and then override the respective file `frontend/dashboards` or create a new one.
+
+## Orchestrator
 
 Uses [dagster](https://docs.dagster.io/) for job orchestration. Access the orchestratro web server via [http://localhost:4000](http://localhost:4000) assuming you have not modified the DAGSTER_WS_PORT environment variable, otherwise use that port. For the deployment setup used in this stack, refer to the official dagster documentation.
 
