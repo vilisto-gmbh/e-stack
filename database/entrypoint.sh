@@ -12,6 +12,7 @@ export_file_env_var() {
 }
 
 export_file_env_var MIGRATIONS_DB_USER_PASSWORD
+export_file_env_var SEED_DB_USER_PASSWORD
 export_file_env_var INTERFACE_DB_USER_PASSWORD
 export_file_env_var FRONTEND_DB_USER_PASSWORD
 export_file_env_var ORCHESTRATOR_DB_USER_PASSWORD
