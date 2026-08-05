@@ -11,6 +11,7 @@ services:
       POSTGRES_PASSWORD_FILE: /run/secrets/postgres_db_user_password
       MIGRATIONS_DB_USER_PASSWORD_FILE: /run/secrets/migrations_db_user_password
       INTERFACE_DB_USER_PASSWORD_FILE: /run/secrets/interface_db_user_password
+      SEED_DB_USER_PASSWORD_FILE: /run/secrets/seed_db_user_password
       FRONTEND_DB_USER_PASSWORD_FILE: /run/secrets/frontend_db_user_password
       ORCHESTRATOR_DB_USER_PASSWORD_FILE: /run/secrets/orchestrator_db_user_password
     volumes:
@@ -42,9 +43,26 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    container_name: db-migrations
+    container_name: db-m
     secrets:
       - migrations_db_user_password
+
+  db-seed:
+    build:
+      context: ./db-seed
+    env_file:
+      - path: .env
+        required: true
+    environment:
+      SEED_DB_USER_PASSWORD_FILE: /run/secrets/seed_db_user_password
+    networks:
+      - pantheon
+    depends_on:
+      db-migrations:
+        condition: service_completed_successfully
+    container_name: db-s
+    secrets:
+      - seed_db_user_password
 
   db-interface:
     build:
@@ -167,6 +185,8 @@ secrets:
     file: ./secrets/postgres_db_user_password.txt
   migrations_db_user_password:
     file: ./secrets/migrations_db_user_password.txt
+  seed_db_user_password:
+    file: ./secrets/seed_db_user_password.txt
   interface_db_user_password:
     file: ./secrets/interface_db_user_password.txt
   frontend_db_user_password:
