@@ -5,6 +5,7 @@ description = "python code for dagster orchestrated project jobs"
 requires-python = ">=3.14"
 dependencies = [
     "dagster>=1.13.15",
+    "pandas>=3.0.5",
     "polars>=1.43.1",
 ]
 
