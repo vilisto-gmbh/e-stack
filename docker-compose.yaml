@@ -15,7 +15,7 @@ services:
       FRONTEND_DB_USER_PASSWORD_FILE: /run/secrets/frontend_db_user_password
       ORCHESTRATOR_DB_USER_PASSWORD_FILE: /run/secrets/orchestrator_db_user_password
     volumes:
-      - ./database/data:/var/lib/postgresql
+      - db-data:/var/lib/postgresql
     ports:
       - ${POSTGRES_PORT}:${POSTGRES_PORT}
     networks:
@@ -24,6 +24,7 @@ services:
     secrets:
       - postgres_db_user_password
       - migrations_db_user_password
+      - seed_db_user_password
       - interface_db_user_password
       - frontend_db_user_password
       - orchestrator_db_user_password
@@ -57,6 +58,8 @@ services:
       SEED_DB_USER_PASSWORD_FILE: /run/secrets/seed_db_user_password
     networks:
       - pantheon
+    volumes:
+      - db-seed:/temp_data
     depends_on:
       db-migrations:
         condition: service_completed_successfully
@@ -104,7 +107,7 @@ services:
     networks:
       - pantheon
     volumes:
-      - ./frontend/data:/var/lib/grafana
+      - fe-data:/var/lib/grafana
     secrets:
       - frontend_db_user_password
 
@@ -193,3 +196,8 @@ secrets:
     file: ./secrets/frontend_db_user_password.txt
   orchestrator_db_user_password:
     file: ./secrets/orchestrator_db_user_password.txt
+
+volumes:
+  db-data:
+  db-seed:
+  fe-data:

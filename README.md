@@ -39,12 +39,15 @@ When rebuilding from scratch use
 docker compose up --force-recreate --renew-anon-volumes --remove-orphans --build
 ```
 
-## Starting fresh
+## Terminating the stack
 
-Remove data that is being persisted cross containers which is app data, migrations, orchestrator data and frontend data:
+End the stack but persist the data via
 ```bash
-rm -r database/data/*
-rm -r frontend/data/*
+docker compose down
+```
+Start totally fresh by dumping all persisted data including database contents, db-seed sentinels and frontend setup via
+```bash
+docker compose down --volumes
 ```
 
 # Services
@@ -57,6 +60,7 @@ Uses a [timescale](https://timescale.readthedocs.io/en/latest/) SQL database. In
     - orchestrator schema
     - postgres superuser
     - migrations_db_user who owns all entities created out of db-migrations
+    - seed_db_user who inherits all privileges on app_schema and its tables from migrations_db_user
     - interface_db_user who inherits all privileges on app_schema and its tables from migrations_db_user
     - frontend_db_user who has read privileges on app_schema and its tables 
     - orchestator_db_user who inherits all privileges on orchestator schema and its tables from migrations_db_user
@@ -72,6 +76,9 @@ Migrations are run against the database every time the stack is started. In orde
 ```bash
 docker compose up --no-deps db-migrations
 ```
+
+## db-seed
+This PSQL service populates the database with data specified in `db-seed/data`. After a successfull `seed_db` run, it leaves a sentinel in the db-seed volume which avoids multiple population runs.
 
 ## db-interface
 
