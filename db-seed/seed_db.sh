@@ -17,7 +17,7 @@ export DB_URI=postgresql://seed_db_user:${SEED_DB_USER_PASSWORD}@${POSTGRES_HOST
 if [ -f "/sentinel" ]; then
   echo "Found sentinel, skipping seed_db execution."; 
 else
-  psql $DB_URI -c "COPY app_schema.energy_data FROM '/src/sample_data.csv' DELIMITER ',' CSV HEADER;";
+  psql $DB_URI -c "COPY app_schema.energy_data(time, power, th_amb, th_amb_prev_day, is_workday) FROM '/src/data/sample_data.csv' DELIMITER ',' CSV HEADER;";
   touch /sentinel;
   echo "Executed seed_db and left sentinel."
 fi

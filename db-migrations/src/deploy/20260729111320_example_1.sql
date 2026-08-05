@@ -7,6 +7,7 @@ CREATE TABLE app_schema.energy_data (
   energy FLOAT,
   energy_unit VARCHAR,
   th_amb FLOAT,
+  th_amb_prev_day FLOAT,
   is_workday BOOLEAN,
   power_pred FLOAT
 );
