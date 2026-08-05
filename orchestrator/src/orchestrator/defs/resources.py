@@ -1,3 +1,4 @@
+import os
 import httpx
 import pandas as pd
 import dagster as dg
@@ -14,7 +15,10 @@ class PostgrestConnector(dg.ConfigurableResource):
     @property
     def http_connector(self) -> HttpConnector:
         return HttpConnector(
-            base_url=base_url, ca_file=ca_file, cert_file=cert_file, key_file=key_file
+            base_url=self.base_url,
+            ca_file=self.ca_file,
+            cert_file=self.cert_file,
+            key_file=self.key_file,
         )
 
     async def get_json_async(self, suburl: str, params: dict | None = None) -> dict:
@@ -78,3 +82,12 @@ class PostgrestConnector(dg.ConfigurableResource):
                 f"Received postgREST error code {err["code"]} with message '{err["message"]}'."
             )
 
+@dg.definitions
+def resources():
+    return dg.Definitions(
+            resources={
+                "postgrest": PostgrestConnector(
+                    base_url=f"{os.getenv('POSTGREST_HOST')}:{os.getenv('PGRST_SERVER_PORT')}"
+                    )
+                }
+            )
