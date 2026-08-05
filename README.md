@@ -86,7 +86,7 @@ Uses [postgREST](https://docs.postgrest.org/en/v14/) as an interface to the data
 
 ## Frontend
 
-Uses a [grafana](https://grafana.com/docs/) frontend. Access the frontend via [http://localhost:9000](http://localhost:9000) assuming you have not modified the GRAFANA_PORT environment variable, otherwise use that port. Use admin as user name and the password set in the frontend_db_user_password secret. This service comes with an example dahboard in dashboards -> examples -> example_dashboard which can be adjusted. Adjustments are persisted cross containers in the `fe-data` volume.
+Uses a [grafana](https://grafana.com/docs/) frontend. Access the frontend via [http://localhost:9000](http://localhost:9000) assuming you have not modified the GRAFANA_PORT environment variable, otherwise use that port. Use admin as user name and the password set in the frontend_db_user_password secret. This service comes with an example dahboard in `dashboards` -> `examples` -> `example_dashboard` which can be adjusted. Adjustments are persisted cross containers in the `fe-data` volume.
 
 ### Persist modified dashboards
 
@@ -97,7 +97,7 @@ Modify any dashboard, save it and then hit the export symbol in the top right co
 Uses [dagster](https://docs.dagster.io/) for job orchestration. Access the orchestratro web server via [http://localhost:4000](http://localhost:4000) assuming you have not modified the DAGSTER_WS_PORT environment variable, otherwise use that port. For the deployment setup used in this stack, refer to the official dagster documentation.
 
 ### Smoke test
-Run the stack, navigate to the webserver, click on Lineage -> processed_csv -> Materialize selected. The asset should successfully materialize.
+Run the stack, navigate to the webserver, click on `Lineage` -> `processed_csv` -> `Materialize selected`. The asset should successfully materialize.
 
 ### Adding user code
-Add your own python code to orchestrator/src/orchestrator.
+Add your own python code to `orchestrator/src/orchestrator`.
