@@ -45,7 +45,7 @@ End the stack but persist the data via
 ```bash
 docker compose down
 ```
-Start totally fresh by dumping all persisted data including database contents, db-seed sentinels and frontend setup via
+Start totally fresh by dropping all persisted data including database contents, db-seed sentinels and frontend setup via
 ```bash
 docker compose down --volumes
 ```
