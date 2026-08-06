@@ -2,6 +2,7 @@ import os
 import httpx
 import pandas as pd
 import dagster as dg
+from typing import Any
 from .utils import HttpConnector
 
 class PostgrestConnector(dg.ConfigurableResource):
@@ -21,7 +22,7 @@ class PostgrestConnector(dg.ConfigurableResource):
             key_file=self.key_file,
         )
 
-    async def get_json_async(self, suburl: str, params: dict | None = None) -> dict:
+    async def get_json_async(self, suburl: str, params: dict | None = None) -> Any:
         """Gets data from a table. Refer to https://docs.postgrest.org/en/v12/references/api/tables_views.html for filtering syntax."""
 
         resp = await self.http_connector.get_json_async(
@@ -87,7 +88,7 @@ def resources():
     return dg.Definitions(
             resources={
                 "postgrest": PostgrestConnector(
-                    base_url=f"{os.getenv('POSTGREST_HOST')}:{os.getenv('PGRST_SERVER_PORT')}"
+                    base_url=f"http://{os.getenv('POSTGREST_HOST')}:{os.getenv('PGRST_SERVER_PORT')}"
                     )
                 }
             )
