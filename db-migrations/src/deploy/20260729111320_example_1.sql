@@ -1,7 +1,7 @@
 -- Deploy 20260729111320_example_1.sql to pg --
 
 CREATE TABLE app_schema.energy_data (
-  time TIMESTAMP WITH TIME ZONE,
+  time TIMESTAMP WITH TIME ZONE UNIQUE,
   power FLOAT,
   power_unit VARCHAR,
   energy FLOAT,
@@ -9,5 +9,7 @@ CREATE TABLE app_schema.energy_data (
   th_amb FLOAT,
   th_amb_prev_day FLOAT,
   is_workday BOOLEAN,
-  power_pred FLOAT
+  power_pred FLOAT,
+  power_pred_lo FLOAT,
+  power_pred_hi FLOAT
 );
