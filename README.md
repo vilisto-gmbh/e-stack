@@ -97,7 +97,7 @@ Modify any dashboard, save it and then hit the export symbol in the top right co
 
 ## Orchestrator
 
-Uses [dagster](https://docs.dagster.io/) for job orchestration. Access the orchestratro web server via [http://localhost:4000](http://localhost:4000) assuming you have not modified the DAGSTER_WS_PORT environment variable, otherwise use that port. For the deployment setup used in this stack, refer to the official dagster documentation.
+Uses [dagster](https://docs.dagster.io/) for job orchestration. Access the orchestrator web server via [http://localhost:4000](http://localhost:4000) assuming you have not modified the DAGSTER_WS_PORT environment variable, otherwise use that port. For the deployment setup used in this stack, refer to the official dagster documentation.
 
 ### Smoke test
 
