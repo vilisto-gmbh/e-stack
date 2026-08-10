@@ -101,7 +101,7 @@ Uses [dagster](https://docs.dagster.io/) for job orchestration. Access the orche
 
 ### Smoke test
 
-Run the stack, navigate to the webserver, click on `Jobs` -> `etl_pipeline_example` -> `Materialize all`. The asset should successfully materialize.
+Run the stack, navigate to the webserver, click on `Jobs` -> `etl_pipeline_example` -> `Materialize all`. All three assets should materialize, including extracting data from the database via the interface, transforming that data using MCMC algorithms and then loading the transformed data back into the database.
 
 ### Adding user code
 
