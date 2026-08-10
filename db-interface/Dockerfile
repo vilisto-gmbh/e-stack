@@ -4,7 +4,7 @@ RUN apt-get update\
   && apt-get install -y --no-install-recommends curl ca-certificates \
   && rm -rf /var/lib/apt/lists/*
 
-COPY --from=base_image /bin/postgrest/ /usr/local/bin/postgrest/
+COPY --from=base_image /bin/postgrest /usr/local/bin/postgrest
 COPY ./postgrest.conf /etc/postgrest.conf
 COPY entrypoint.sh /usr/local/bin/custom-entrypoint.sh
 RUN chmod +x /usr/local/bin/custom-entrypoint.sh

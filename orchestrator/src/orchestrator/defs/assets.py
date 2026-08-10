@@ -1,5 +1,4 @@
 import bambi as bmb
-import httpx
 import polars as pl
 import pandas as pd
 import dagster as dg
@@ -80,14 +79,14 @@ def prediction_data(
     return pred_df
 
 
-@dg.asset(deps=["pred_data"])
+@dg.asset(deps=["prediction_data"])
 async def ingest_prediction_data(
     context: dg.AssetExecutionContext,
-    pred_data: pd.DataFrame,
+    prediction_data: pd.DataFrame,
     postgrest: PostgrestConnector,
 ) -> None:
 
-    pred_data_json = pred_data.to_json(orient="records")
+    pred_data_json = prediction_data.to_json(orient="records")
     pgrst_rsp = await postgrest.upsert_async(
         suburl="energy_data",
         json=pred_data_json,
