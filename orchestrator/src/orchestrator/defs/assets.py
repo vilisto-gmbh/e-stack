@@ -80,7 +80,7 @@ def prediction_data(
     return pred_df
 
 
-@dg.asset(deps=["prediction_data"])
+@dg.asset(deps=["pred_data"])
 async def ingest_prediction_data(
     context: dg.AssetExecutionContext,
     pred_data: pd.DataFrame,
