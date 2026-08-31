@@ -9,7 +9,7 @@ All services are containerized and meant to be run locally via docker compose.
 
 ## Who this is for
 
-People working regularly with time series data. In this readme, you will find a brief overview. For an in-depth manual see `/documentation/e-stack-manual.pdf`.
+People working regularly with time series data. In this README, you will find a brief overview. For an in-depth manual see `/documentation/e-stack-manual.pdf`.
 
 # Setup
 
