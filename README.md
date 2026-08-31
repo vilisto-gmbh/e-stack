@@ -1,7 +1,15 @@
 # E-stack
 
+## What this is
+
 Out-of-the-box-framework for data pipelines including database, frontend and orchestration services. This architecture was originally built for energy time series data but can be used for any type of data.
 All services are containerized and meant to be run locally via docker compose.
+
+![Example visualization](documentation/grafana_timeline.png)
+
+## Who this is for
+
+People working regularly with time series data. In this README, you will find a brief overview. For an in-depth manual see `/documentation/e-stack-manual.pdf`.
 
 # Setup
 
